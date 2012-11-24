@@ -11,8 +11,8 @@ std::deque<IplImage *> que;
 int main()
 {
 	cvNamedWindow("glitcher", CV_WINDOW_NORMAL);
-	cvSetWindowProperty("glitcher", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
 	cvResizeWindow("glitcher", 640, 480);
+	cvSetWindowProperty("glitcher", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
 	CvCapture *cam = cvCreateCameraCapture(0);
 	cvSetCaptureProperty(cam, CV_CAP_PROP_FRAME_WIDTH, 640);
 	cvSetCaptureProperty(cam, CV_CAP_PROP_FRAME_HEIGHT, 480);
