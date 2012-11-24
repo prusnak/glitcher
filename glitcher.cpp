@@ -30,6 +30,7 @@ int main()
 		}
 		if (que.size() > 0) {
 			cvShowImage("glitcher", que.front());
+			cvReleaseImage(&que.front());
 			que.pop_front();
 		}
 		if(cvWaitKey(10) == 27) break;
