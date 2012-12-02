@@ -4,18 +4,45 @@
 #include <cstdlib>
 #include <cv.h>
 #include <highgui.h>
-
-const unsigned int LEN = 8;
+#include <unistd.h>
 
 std::vector<IplImage *> buf;
 std::deque<IplImage *> que;
 
+bool fullscreen = false;
+int camid = -1;
+unsigned int frames = 8;
+
+void process_params(int argc, char **argv)
+{
+	int c;
+	while ((c = getopt(argc, argv, "c:fhn:")) != -1) {
+		switch (c) {
+			case 'c':
+				camid = atoi(optarg);
+				break;
+			case 'f':
+				fullscreen = true;
+				break;
+			case 'h':
+				printf("Usage: glitcher [-c X] [-f] [-n X] [-h]\n\n");
+				printf("    -c X    use camera with index X instead of the default\n");
+				printf("    -f      use fullscreen\n");
+				printf("    -n X    use last X frames (default is 8)\n");
+				printf("    -h      this help\n\n");
+				exit(1);
+				break;
+			case 'n':
+				frames = atoi(optarg);
+				break;
+		}
+	}
+}
+
+
 int main(int argc, char **argv)
 {
-	int camid = -1;
-	if (argc > 1) {
-		camid = atoi(argv[1]);
-	}
+	process_params(argc, argv);
 	CvCapture *cam = cvCreateCameraCapture(camid);
 	if (!cam) {
 		std::cerr << "Camera not found" << std::endl;
@@ -23,7 +50,9 @@ int main(int argc, char **argv)
 	}
 	cvNamedWindow("glitcher", CV_WINDOW_NORMAL);
 	cvResizeWindow("glitcher", 640, 480);
-	cvSetWindowProperty("glitcher", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+	if (fullscreen) {
+			cvSetWindowProperty("glitcher", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
+	}
 	cvSetCaptureProperty(cam, CV_CAP_PROP_FRAME_WIDTH, 640);
 	cvSetCaptureProperty(cam, CV_CAP_PROP_FRAME_HEIGHT, 480);
 	for (;;) {
@@ -34,7 +63,7 @@ int main(int argc, char **argv)
 		}
 		IplImage *i = cvCloneImage(frame);
 		buf.push_back(i);
-		if (buf.size() >= LEN) {
+		if (buf.size() >= frames) {
 			std::vector<IplImage *>::reverse_iterator rit;
 			for (rit = buf.rbegin(); rit < buf.rend(); rit++) {
 				que.push_back(*rit);
