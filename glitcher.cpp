@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 		std::cerr << "Camera not found" << std::endl;
 		return 1;
 	}
-	cvNamedWindow("glitcher", CV_WINDOW_NORMAL);
+	cvNamedWindow("glitcher", CV_WINDOW_NORMAL | CV_GUI_NORMAL);
 	cvResizeWindow("glitcher", 640, 480);
 	if (fullscreen) {
 			cvSetWindowProperty("glitcher", CV_WND_PROP_FULLSCREEN, CV_WINDOW_FULLSCREEN);
